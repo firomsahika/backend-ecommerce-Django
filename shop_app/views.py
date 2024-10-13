@@ -76,3 +76,15 @@ def update_quantity(request):
         return Response({"data":serializer.data, 'message':'carrt updated successfully!'})
     except Exception as e:
         return Response({"error":str(e)}, status=400)
+
+
+@api_view(['POST'])
+def delete_item(request):
+    try:
+        cartitem_id = request.data.get("item_id")
+        cartitem = CartItem.objects.get(id=cartitem_id)
+
+        cartitem.delete()
+        return Response({"message": " Item deleted succesfully!"}, status=200)
+    except Exception as e:
+        return Response({"err": str(e)}, status=400)
