@@ -88,3 +88,10 @@ def delete_item(request):
         return Response({"message": " Item deleted succesfully!"}, status=200)
     except Exception as e:
         return Response({"err": str(e)}, status=400)
+
+@api_view(['GET'])
+def product_category(request, category):
+    product = Product.objects.filter(category=category)
+    serializer = ProductSerializer(product, many=True)
+
+    return Response(serializer.data)
