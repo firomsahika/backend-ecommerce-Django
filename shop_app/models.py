@@ -4,11 +4,13 @@ from django.conf import settings
 
 
 class Product(models.Model):
-    CATEGORY = (("Electronics", "ELECTRONICS"),
-                ("Groceries", "GROCERIES"),
-                ("clothings", "CLOTHINGS"))
+    CATEGORY = (("Asus", "ASUS"),
+                ("Hp", "HP"),
+                ("Dell", "DELL"),
+                ("Macbook","MACBOOK")
+                )
     name = models.CharField(max_length=100)
-    slug = models.SlugField(blank=True, null=True)
+    slug = models.SlugField(blank=True, null=True) 
     image = models.ImageField(upload_to='img')
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits = 6, decimal_places=2)
