@@ -10,5 +10,9 @@ urlpatterns =[
     path("get_cart", views.get_cart, name="get_cart"),
     path("update_quantity/", views.update_quantity, name="update_quantity"),
     path("delete_item", views.delete_item, name="delete_item"),
-    path("product_category/<str:category>/", views.product_category, name="product_category")
+    path("product_category/<str:category>/", views.product_category, name="product_category"),
+    path("product_ram/<str:ram>/", views.product_ram, name="product_ram"),
+    path("get_username", views.get_username, name="get_username"),
+    path("search_product", views.search_product, name="search_product")
+
 ]
