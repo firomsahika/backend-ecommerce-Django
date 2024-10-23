@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Product,Cart,CartItem
-
+from django.contrib.auth import get_user_model
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,6 +64,22 @@ class SimpleCartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id', 'cart_code', 'num_of_items']
 
-    
-    
+class RegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
 
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'email', 'phone','first_name', 'last_name', 'password']
+    
+    def create(self,validated_data):
+        user = get_user_model()(
+              username=validated_data['username'],
+              first_name=validated_data['first_name'],
+              last_name=validated_data['last_name'],
+              phone=validated_data['phone'],
+              email=validated_data['email'],
+        )
+
+        user.set_password(validated_data['password'])  # Hash the password
+        user.save()
+        return user
