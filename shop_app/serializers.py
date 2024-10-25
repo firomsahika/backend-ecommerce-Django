@@ -64,22 +64,43 @@ class SimpleCartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id', 'cart_code', 'num_of_items']
 
+
+
+      
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)  # Add confirm_password field
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'phone','first_name', 'last_name', 'password']
-    
-    def create(self,validated_data):
+        fields = ['username', 'email', 'phone', 'first_name', 'last_name', 'password', 'confirm_password']  # Remove the comma here
+
+    def validate(self, data):  
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError("Passwords do not match")
+        return data
+
+    def create(self, validated_data):
+       
+        validated_data.pop('confirm_password')
+
+        # Create a new user instance
         user = get_user_model()(
-              username=validated_data['username'],
-              first_name=validated_data['first_name'],
-              last_name=validated_data['last_name'],
-              phone=validated_data['phone'],
-              email=validated_data['email'],
+            username=validated_data['username'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            phone=validated_data['phone'],
+            email=validated_data['email'],
         )
 
-        user.set_password(validated_data['password'])  # Hash the password
+        # Set the user's password securely
+        user.set_password(validated_data['password'])
         user.save()
+
         return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()  # This retrieves the user model
+        fields = ['id', 'username', 'email', 'phone', 'first_name', 'last_name']  
