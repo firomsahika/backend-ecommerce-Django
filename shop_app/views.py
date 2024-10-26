@@ -1,18 +1,16 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Product,Cart, CartItem
+from .models import Product,Cart, CartItem,ChapaTransaction
 from decimal import Decimal
-
-from .serializers import RegistrationSerializer,UserSerializer,ProductSerializer,CartSerializer,DetailedProductSerializer,SimpleCartSerializer,CartItemSerializer
-import requests
-import hashlib
-import json
-from django.conf import settings
-from django.http import JsonResponse
+from django.apps import apps
+from .serializers import RegistrationSerializer  ,UserSerializer,ProductSerializer,CartSerializer,DetailedProductSerializer,SimpleCartSerializer,CartItemSerializer
 from django.views.decorators.csrf import csrf_exempt
-
+from .api import ChapaAPI
+from django.http import JsonResponse
+import json
 
 
 
@@ -143,81 +141,30 @@ def register(request):
 
 # payment integration views
 
-def generate_nonce():
-    import uuid
-    return str(uuid.uuid4())
-
-
-
-@permission_classes([IsAuthenticated])
-@csrf_exempt  
-@api_view('[POST]')
-def apply_fabric_token():
-    BASE_URL = settings.BASE_URL
-    fabric_app_id = settings.FABRIC_APP_ID
-    app_secret = settings.APP_SECRET
-
-    headers = {
-        "Content-Type": "application/json",
-        "X-APP-Key": fabric_app_id
-    }
-    payload = {
-        "appSecret": app_secret
-    }
-    response = requests.post(f"{BASE_URL}/payment/v1/token", headers=headers, json=payload, verify=False)
-    
-    return response.json()
-
 @csrf_exempt
-def create_order(request):
-    if request.method == "POST":
-        
-        title = "Payment request"
-
-        cart_code = request.data.get('cart_code')
-        cart = Cart.objects.get(cart_code=cart_code)
-        user = request.user
-
-        amount = sum([item.quantity * item.prouct.price for item in cart.items.all()])
-        tax = Decimal("4.00")
-        total_amount = amount + tax
-        currency = "ETB"
-        redirect_url = f"{BASE_URL}/payment-status"
-
-        # Get the fabric token
-        token_result = apply_fabric_token()
-        fabric_token = token_result.get("token")
-
-        # Create order
-        order_result = request_create_order(fabric_token, title, total_amount)
-        
-        return JsonResponse(order_result)
-
-def request_create_order(fabric_token, title, total_amount):
-    BASE_URL = settings.BASE_URL
-    fabric_app_id = settings.FABRIC_APP_ID
-    merchant_app_id = settings.MERCHANT_APP_ID
-    merchant_code = settings.MERCHANT_CODE
-    notify_path = settings.NOTIFY_PATH
-
-    headers = {
-        "Content-Type": "application/json",
-        "X-APP-Key": fabric_app_id,
-        "Authorization": fabric_token
-    }
-    payload = create_request_object(title, total_amount, merchant_app_id, merchant_code, notify_path)
-    response = requests.post(f"{BASE_URL}/payment/v1/merchant/preOrder", headers=headers, json=payload, verify=False)
+@api_view(['POST'])
+def chapa_webhook(request):
+    try:
+        data = json.loads(request.body)
+    except json.decoder.JSONDecodeError:
+        return JsonResponse(
+            {
+                'error': "Invalid Json Body"
+            },
+            status=400
+        )
     
-    return response.json()
-
-def create_request_object(title, total_amount, merchant_app_id, merchant_code, notify_path):
-    # Construct your payload here based on the TeleBirr API requirements
-    return {
-        "title": title,
-        "amount": total_amount,
-        "merchantAppId": merchant_app_id,
-        "merchantCode": merchant_code,
-        "notifyPath": notify_path,
-        "trans_currency": "ETB",
-        # Add other required fields...
-    }
+    model_class = apps.get_model(settings.CHAPA_TRANSACTION_MODEL)
+    try:
+        transaction_instance = model_class.objects.get(id=data.get('trx_ref'))
+        transaction_instance.status = data.get('status')
+        transaction_instance.response_dump = data
+        transaction_instance.save()
+        return JsonResponse(data)
+    except model_class.DoesNotExist:
+        return JsonResponse(
+            {
+                'error': "Invalid Transaction"
+            },
+            status=400
+        )

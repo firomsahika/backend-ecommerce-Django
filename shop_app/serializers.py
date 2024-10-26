@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Product,Cart,CartItem
+from .models import Product,Cart,CartItem,ChapaTransaction
 from django.contrib.auth import get_user_model
+from decimal import Decimal
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -104,3 +105,30 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()  # This retrieves the user model
         fields = ['id', 'username', 'email', 'phone', 'first_name', 'last_name']  
+
+        
+class ChapaTransactionSerializer(serializers.ModelSerializer):
+    amount = serializers.SerializerMethodField()
+    class Meta:
+        model: ChapaTransaction
+        fields = [
+            'id',
+            'amount',
+            'currency',
+            'email',
+            'phone_number',
+            'first_name',
+            'last_name',
+            'payment_title',
+            'description',
+            'status',
+            'response_dump',
+            'checkout_url'
+        ]
+
+    def get_amount(self, cart):
+        items = cart.items.all()
+        total = sum([item.product.price * item.quantity for item in items])
+        tax = Decimal("4.00")
+        total_amount = total + tax
+        return total_amount
