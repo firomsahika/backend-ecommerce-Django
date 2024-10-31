@@ -1,24 +1,21 @@
 
-
-
 from pathlib import Path
 from datetime import timedelta
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
 SECRET_KEY = 'django-insecure--b@udpeo&@w^3e$yxt3^737b4)6*n&bv9a%+47_qc6kacwj#p!'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -30,6 +27,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'core',
     'shop_app',
+    'chapa',
     'corsheaders',
     'django_chapa',
     
@@ -144,9 +142,16 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5)
 }
 
+CHAPA_SECRET = "CHASECK_TEST-CIYSZgWmpEB4ed8X4dlPhKbvrzyHSTxQ"
+CHAPA_PUBLIC_KEY = "CHAPUBK_TEST-GY6MMxalo87x6yMfh9GnFcLwOSXG7Y4x"
+CHAPA_API_URL = 'https://api.chapa.co'
+CHAPA_API_VERSION = 'v1'
+CHAPA_TRANSACTION_MODEL = 'chapa.ChapaTransaction'
+CHAPA_WEBHOOK_URL = "http://localhost:5173/"
+#    os.environ.get('CHAPA_WEBHOOK_URL')
 
-CHAPA_SECRET = os.environ.get('CHAPA_SECRET')
-CHAPA_API_URL = os.environ.get('CHAPA_API_URL', 'https://api.chapa.co')
-CHAPA_WEBHOOK_URL = os.environ.get('CHAPA_WEBHOOK_URL', 'http://127.0.0.1:8000/chapa_webhook/')  # Local development URL
-CHAPA_API_VERSION = os.environ.get('CHAPA_API_VERSION', 'v1')
-CHAPA_TRANSACTION_MODEL = 'shop_app.ChapaTransaction'
+
+# CHAPA_SECRET = os.environ.get('CHAPA_SECRET')
+# CHAPA_API_URL = os.environ.get('CHAPA_API_URL', 'https://api.chapa.co')
+
+# CHAPA_API_VERSION = os.environ.get('CHAPA_API_VERSION', 'v1')

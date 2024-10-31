@@ -15,6 +15,5 @@ urlpatterns =[
     path("get_user_info", views.get_user_info, name="get_user_info"),
     path("search_product/<str:name>", views.search_product, name="search_product"),
     path("register/", views.register, name="register"),
-    path('chapa_webhook/', views.chapa_webhook, name='chapa_webhook'),
    
 ]
