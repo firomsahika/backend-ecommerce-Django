@@ -139,8 +139,6 @@ def register(request):
     return Response(serializer.errors, status=400)
 
 
-# payment integration views
-
 
 
 
