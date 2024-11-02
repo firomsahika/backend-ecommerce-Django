@@ -4,7 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.apps import apps
 import json
-
+from .models import ChapaTransaction
+from .api import ChapaAPI
 
 
 
@@ -34,3 +35,28 @@ def chapa_webhook(request):
             },
             status=400
         )
+    
+@csrf_exempt
+def initialize_payment(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        transaction = ChapaTransaction.objects.create(
+            amount=data["amount"],
+            currency="ETB",
+            email=data["email"],
+            phone_number=data["phone_number"],
+            first_name=data["first_name"],
+            last_name=data["last_name"],
+            payment_title="Chapa Payment",
+            description="Payment for services",
+        )
+
+        chapa_response = ChapaAPI.send_request(transaction)
+
+        if chapa_response.get('status')=="success":
+            checkout_url = chapa_response["data"]["checkout_url"]
+            return JsonResponse({"checkout_url": checkout_url}, status=200)
+        return JsonResponse({"error": "Failed to initialize payment"}, status=500)
+    
+    return JsonResponse({"error": "Invalid request"}, status=400)
