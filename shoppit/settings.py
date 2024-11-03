@@ -16,7 +16,7 @@ SECRET_KEY = 'django-insecure--b@udpeo&@w^3e$yxt3^737b4)6*n&bv9a%+47_qc6kacwj#p!
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["myshoppit-app.onrender.com", "localhost","127.0.0.1"]
 
 
 INSTALLED_APPS = [
