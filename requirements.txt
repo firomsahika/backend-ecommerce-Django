@@ -37,6 +37,7 @@ pyOpenSSL==23.2.0
 python-dateutil==2.8.2
 python-dotenv==1.0.1
 PySocks==1.7.1
+pycryptodome==3.18.0
 PyYAML==6.0.1
 regex==2024.4.28
 requests==2.31.0
