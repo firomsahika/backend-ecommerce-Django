@@ -31,7 +31,7 @@ ply==3.11
 productmd==1.38
 ptyprocess==0.7.0
 pycparser==2.20
-pycrypto==2.6.1
+# pycrypto==2.6.1
 PyJWT==2.9.0
 pyOpenSSL==23.2.0
 python-dateutil==2.8.2
