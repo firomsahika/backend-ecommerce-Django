@@ -12,7 +12,6 @@ class ChapaStatus(models.TextChoices):
 class ChapaTransactionMixin(models.Model):
     "inherit this model and add your own extra fields"
     id = models.UUIDField(primary_key=True, default=uuid4)
-
     amount = models.FloatField()
     currency = models.CharField(max_length=25, default='ETB')
     email = models.EmailField()
@@ -27,6 +26,7 @@ class ChapaTransactionMixin(models.Model):
 
     response_dump = models.JSONField(default=dict, blank=True)  # incase the response is valuable in the future
     checkout_url = models.URLField(null=True, blank=True)
+    redirect_url = models.CharField(max_length=40, blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -36,6 +36,7 @@ class ChapaTransactionMixin(models.Model):
     
     def serialize(self) -> dict:
         return {
+            
             'amount': self.amount,
             'currency': self.currency,
             'email': self.email,

@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Product,Cart,CartItem
+from .models import Product,Cart,CartItem,ChapaTransaction
 from django.contrib.auth import get_user_model
+from decimal import Decimal
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -100,7 +101,37 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
+class NewCartItemSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    order_id = serializers.SerializerMethodField()
+    order_date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CartItem
+        fields = ['id', 'product', 'quantity','order_id', 'order_date']
+
+    def get_order_id(self, cartitem):
+        order_id = cartitem.cart.cart_code
+        return order_id
+
+    def get_order_date(self, cartitem):
+        order_date = cartitem.cart.modified_at
+        return order_date
+
+
+
+
 class UserSerializer(serializers.ModelSerializer):
+    order_items = serializers.SerializerMethodField()
+
     class Meta:
         model = get_user_model()  # This retrieves the user model
-        fields = ['id', 'username', 'email', 'phone', 'first_name', 'last_name']  
+        fields = ['id', 'username', 'email', 'phone', 'first_name', 'last_name','order_items'] 
+
+    def get_order_items(self, user):
+        
+        cartitems = CartItem.objects.filter(cart__user=user, )[:10]
+        serializer = NewCartItemSerializer(cartitems, many=True)
+        return serializer.data
+
+    

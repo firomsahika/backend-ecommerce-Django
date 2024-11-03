@@ -1,23 +1,21 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Product,Cart, CartItem
+from .models import Product,Cart, CartItem,ChapaTransaction
 from decimal import Decimal
-
-from .serializers import RegistrationSerializer,UserSerializer,ProductSerializer,CartSerializer,DetailedProductSerializer,SimpleCartSerializer,CartItemSerializer
-import requests
-import hashlib
+from django.apps import apps
+from .serializers import RegistrationSerializer  ,UserSerializer,ProductSerializer,CartSerializer,DetailedProductSerializer,SimpleCartSerializer,CartItemSerializer
+from django.views.decorators.csrf import csrf_exempt
+from .api import ChapaAPI
+from django.http import JsonResponse
 import json
 from django.conf import settings
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
 
 
-
-BASE_URL = "http://localhost:5173/"
-TELEBIRR_BASE_URL = "https://api.telebirr.com/v1/payments"
+BASE_URL = settings.REACT_BASE_URL
 
 @api_view(['GET'])
 def products(request):
@@ -122,6 +120,7 @@ def product_ram(request, ram):
 def get_user_info(request):
     user = request.user
     serializer = UserSerializer(user)
+    print(f"Serialized data: {serializer.data}")
     return Response(serializer.data)
 
 
@@ -141,22 +140,6 @@ def register(request):
     return Response(serializer.errors, status=400)
 
 
-# payment integration views
 
-@api_view(['GET'])
-def payment(request):
-    cart_code = request.data.get("cart_code") 
-    try:
-        cart = Cart.objects.get(cart_code=cart_code, user=request.user)
-        actual_amount = sum(item.quantity * item.product.price for item in cart.items.all())
-        tax = Decimal("4.00")
-        amount = actual_amount + tax
-        print(f"Calculated total amount: {amount}")
-        ctx = {
-            "amount":amount
-        }
-     
-        return Response({"amount": amount}, status=200)
 
-    except Cart.DoesNotExist:
-        return Response({"error": "Cart not found"}, status=404)
+

@@ -2,10 +2,14 @@
 from pathlib import Path
 from datetime import timedelta
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
 
 SECRET_KEY = 'django-insecure--b@udpeo&@w^3e$yxt3^737b4)6*n&bv9a%+47_qc6kacwj#p!'
 
@@ -27,11 +31,13 @@ INSTALLED_APPS = [
     'shop_app',
     'chapa',
     'corsheaders',
+    'django_chapa',
     
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -116,6 +122,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_STORAGE =  "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = 'img/'
 MEDIA_ROOT = BASE_DIR/"media"
 
@@ -136,20 +144,16 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5)
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7), 
 }
-
-
-
-# CHAPA_SECRET = os.environ.get('CHAPA_SECRET')
-# CHAPA_API_URL = os.environ.get('CHAPA_API_URL', 'https://api.chapa.co')
-# CHAPA_WEBHOOK_URL = os.environ.get('CHAPA_WEBHOOK_URL')
-# CHAPA_API_VERSION = os.environ.get('CHAPA_API_VERSION', 'v1')
-# CHAPA_TRANSACTION_MODEL = 'django_chapa.ChapaTransaction'
 
 CHAPA_SECRET = "CHASECK_TEST-CIYSZgWmpEB4ed8X4dlPhKbvrzyHSTxQ"
 CHAPA_PUBLIC_KEY = "CHAPUBK_TEST-GY6MMxalo87x6yMfh9GnFcLwOSXG7Y4x"
 CHAPA_API_URL = 'https://api.chapa.co'
 CHAPA_API_VERSION = 'v1'
-CHAPA_WEBHOOK_URL = os.environ.get('CHAPA_WEBHOOK_URL')
-CHAPA_TRANSACTION_MODEL = 'django_chapa.ChapaTransaction'
+CHAPA_TRANSACTION_MODEL = 'chapa.ChapaTransaction'
+CHAPA_WEBHOOK_URL = "http://127.0.0.1:8000/api/chapa-webhook"
+
+
+REACT_BASE_URL = os.getenv('REACT_BASE_URL', "http://localhost:5173/")
