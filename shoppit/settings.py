@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'shop_app',
     'chapa',
     'corsheaders',
-    'django_chapa',
+    
     
 ]
 
