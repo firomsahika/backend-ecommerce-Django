@@ -16,6 +16,6 @@ urlpatterns =[
     path("search_product/<str:name>", views.search_product, name="search_product"),
     path("register/", views.register, name="register"),
     path("api/scraped_products", views.get_scraped_products, name="get_scraped_products"),
-    path("api/chat_response/", views.chat_response, name="chat_response")
+    path("chat_response/", views.chat_response, name="chat_response")
    
 ]

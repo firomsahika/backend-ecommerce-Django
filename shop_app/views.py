@@ -14,7 +14,7 @@ import json
 from django.conf import settings
 from django.http import JsonResponse
 from .services.scraper import scrape_product_data
-from langchain import OpenAI
+from langchain_community.llms import OpenAI
 
 
 BASE_URL = settings.REACT_BASE_URL
@@ -143,7 +143,7 @@ def register(request):
 
 
 def get_scraped_products(request):
-    url = request.GET("url", "https://shoppit-jqdk.onrender.com/")
+    url = request.GET.get("url", "https://shoppit-jqdk.onrender.com/")
     scraped_data = scrape_product_data(url)
     return JsonResponse({"products": scraped_data})
 
@@ -159,7 +159,7 @@ def chat_response(request):
 
         prompt = f"{user_message}\n Here are product detail:\n {product_info}"
 
-        llm = OpenAI(temperature=0)
+        llm= OpenAI(temperature=0)
 
         bot_response = llm(prompt)
 
