@@ -12,7 +12,9 @@ from .api import ChapaAPI
 from django.http import JsonResponse
 import json
 from django.conf import settings
-
+from django.http import JsonResponse
+from .services.scraper import scrape_product_data
+from langchain import OpenAI
 
 
 BASE_URL = settings.REACT_BASE_URL
@@ -140,6 +142,27 @@ def register(request):
     return Response(serializer.errors, status=400)
 
 
+def get_scraped_products(request):
+    url = request.GET("url", "https://shoppit-jqdk.onrender.com/")
+    scraped_data = scrape_product_data(url)
+    return JsonResponse({"products": scraped_data})
 
+@csrf_exempt
+def chat_response(request):
+    if request.method == "POST":
+        user_message = request.POST.get('message')
+        product_url = request.POST.get('url', "https://shoppit-jqdk.onrender.com/")
 
+        products = scrape_product_data(product_url)
 
+        product_info = "\n".join([f"Product: {p['name']}, Price: {p['price']}, ram: {p['ram']}" for p in products])
+
+        prompt = f"{user_message}\n Here are product detail:\n {product_info}"
+
+        llm = OpenAI(temperature=0)
+
+        bot_response = llm(prompt)
+
+        return JsonResponse({"bot_response": bot_response})
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
