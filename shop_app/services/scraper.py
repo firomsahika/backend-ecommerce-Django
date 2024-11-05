@@ -17,12 +17,10 @@ def scrape_product_data(url):
     # driver = None  
 
     try:
-       
         driver = webdriver.Chrome(service=service)
         driver.get(url)
         time.sleep(3)  # Wait for the page to load
 
-    
         product_elements = driver.find_elements(By.ID, 'product-item')
         print(f"Found {len(product_elements)} product elements.")  # Debug output
 

@@ -15,6 +15,8 @@ from django.conf import settings
 from django.http import JsonResponse
 from .services.scraper import scrape_product_data
 from langchain_community.llms import OpenAI
+from urllib.parse import urlparse
+
 
 
 BASE_URL = settings.REACT_BASE_URL
@@ -142,11 +144,28 @@ def register(request):
     return Response(serializer.errors, status=400)
 
 
+def is_valid_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
+    
+
+@api_view(['GET'])
 def get_scraped_products(request):
     url = request.GET.get("url", "https://shoppit-jqdk.onrender.com/")
-    scraped_data = scrape_product_data(url)
-    return JsonResponse({"products": scraped_data})
-
+    
+    if not is_valid_url(url):
+        return JsonResponse({"error": "Invalid URL provided."}, status=400)
+    
+    try:
+        scraped_data = scrape_product_data(url)
+        return JsonResponse({"products": scraped_data})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
+    
 @csrf_exempt
 def chat_response(request):
     if request.method == "POST":
