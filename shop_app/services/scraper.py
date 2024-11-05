@@ -1,11 +1,11 @@
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import time
-import os
 
-
+# Get the directory of the current script
 current_dir = os.path.dirname(os.path.abspath(__file__))
 chromedriver_path = os.path.join(current_dir, "chromedriver.exe")
 service = Service(executable_path=chromedriver_path)
@@ -17,21 +17,31 @@ chrome_options.add_argument("--disable-dev-shm-usage")
 
 def scrape_product_data(url):
     products = []
-    driver = None  # Ensure driver is initialized to None
+    driver = None  # Initialize driver to None
 
     try:
-        # Attempt to initialize the driver
+        # Initialize the driver
         driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.get(url)
         time.sleep(3)  # Wait for the page to load
 
-        # Find product elements
-        product_elements = driver.find_elements(By.ID, 'product-item')
+        # Print the page source for debugging
+        page_source = driver.page_source
+        print(page_source)  # Output the HTML to see what has been loaded
+
+        # Find all product elements by the common id
+        product_elements = driver.find_elements(By.CLASS_NAME, 'product-item')
+        print(f"Found {len(product_elements)} product elements.")  # Debug output
+
         for product in product_elements:
             try:
-                name = product.find_element(By.ID, f'product-name-{product.id}').text
-                price = product.find_element(By.ID, f'product-price-{product.id}').text
-                ram = product.find_element(By.ID, f'product-ram-{product.id}').text
+                # Extract the product id from the element's id
+                product_id = product.get_attribute("id").split("-")[-1]  # Get the id after the hyphen
+
+                # Use `product` to find nested elements by their specific ids
+                name = product.find_element(By.CLASS_NAME, f'product-name').text
+                price = product.find_element(By.CLASS_NAME, f'product-price').text
+                ram = product.find_element(By.CLASS_NAME, f'product-ram').text
 
                 products.append({
                     'name': name,
