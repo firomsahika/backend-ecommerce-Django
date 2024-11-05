@@ -14,27 +14,23 @@ service = Service(executable_path="chromedriver.exe")
 
 def scrape_product_data(url):
     products = []
-    driver = None  # Initialize driver to None
+    # driver = None  
 
     try:
-        # Initialize the driver
+       
         driver = webdriver.Chrome(service=service)
         driver.get(url)
         time.sleep(3)  # Wait for the page to load
 
-        # Print the page source for debugging
-        page_source = driver.page_source
-        print(page_source)  # Output the HTML to see what has been loaded
-
-        # Find all product elements by the common id
-        product_elements = driver.find_elements(By.CLASS_NAME, 'product-item')
+    
+        product_elements = driver.find_elements(By.ID, 'product-item')
         print(f"Found {len(product_elements)} product elements.")  # Debug output
 
         for product in product_elements:
             try:
-                name = product.find_element(By.CLASS_NAME, f'product-name').text
-                price = product.find_element(By.CLASS_NAME, f'product-price').text
-                ram = product.find_element(By.CLASS_NAME, f'product-ram').text
+                name = product.find_element(By.ID, 'product-name').text
+                price = product.find_element(By.ID, 'product-price').text
+                ram = product.find_element(By.ID, 'product-ram').text
 
                 products.append({
                     'name': name,
