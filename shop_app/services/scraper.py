@@ -5,6 +5,9 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
+from selenium.webdriver.chrome.options import Options
+
+
 
 
 def scrape_product_data(url):
@@ -13,9 +16,9 @@ def scrape_product_data(url):
 
     try:
     
-        # chrome_options = Options()
-        # chrome_options.add_argument("--no-sandbox")
-        # chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
 
       
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
