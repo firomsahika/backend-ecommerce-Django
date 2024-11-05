@@ -5,12 +5,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
-# Use the os module to get the current directory and construct the path to chromedriver.exe
-current_dir = os.path.dirname(os.path.abspath(__file__))
-chromedriver_path = os.path.join(current_dir, 'chromedriver.exe')
 
-# Initialize the ChromeDriver service
-service = Service(executable_path=chromedriver_path)
 
 def scrape_product_data(url):
     products = []
