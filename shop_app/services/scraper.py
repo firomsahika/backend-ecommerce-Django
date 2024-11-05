@@ -5,15 +5,12 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import time
 
-# Get the directory of the current script
-current_dir = os.path.dirname(os.path.abspath(__file__))
-chromedriver_path = os.path.join(current_dir, "chromedriver.exe")
-service = Service(executable_path=chromedriver_path)
+service = Service(executable_path="chromedriver.exe")
 
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
+# chrome_options = Options()
+# chrome_options.add_argument("--headless")
+# chrome_options.add_argument("--no-sandbox")
+# chrome_options.add_argument("--disable-dev-shm-usage")
 
 def scrape_product_data(url):
     products = []
@@ -21,7 +18,7 @@ def scrape_product_data(url):
 
     try:
         # Initialize the driver
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver = webdriver.Chrome(service=service)
         driver.get(url)
         time.sleep(3)  # Wait for the page to load
 
@@ -35,10 +32,6 @@ def scrape_product_data(url):
 
         for product in product_elements:
             try:
-                # Extract the product id from the element's id
-                product_id = product.get_attribute("id").split("-")[-1]  # Get the id after the hyphen
-
-                # Use `product` to find nested elements by their specific ids
                 name = product.find_element(By.CLASS_NAME, f'product-name').text
                 price = product.find_element(By.CLASS_NAME, f'product-price').text
                 ram = product.find_element(By.CLASS_NAME, f'product-ram').text
