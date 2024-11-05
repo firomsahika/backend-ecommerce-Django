@@ -7,15 +7,16 @@ import time
 
 from selenium.webdriver.chrome.options import Options
 
-chrome_options = Options()
-chrome_options.binary_location = "C:\Users\CSEC ASTU\Downloads\chrome.exe"
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
+
 
 def scrape_product_data(url):
     products = []
     driver = None 
     try:
+        chrome_options = Options()
+        chrome_options.binary_location = "C:\Users\CSEC ASTU\Downloads\chrome.exe"
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
     
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         driver.get(url)
