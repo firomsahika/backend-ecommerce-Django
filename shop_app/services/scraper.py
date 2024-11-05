@@ -14,7 +14,8 @@ def scrape_product_data(url):
     driver = None 
     try:
         chrome_options = Options()
-        chrome_options.binary_location = "C:\\Users\\CSEC ASTU\\Downloads\\chrome.exe"
+        chrome_options.binary_location = r"C:\Users\CSEC ASTU\Downloads\chrome.exe"
+
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
     
