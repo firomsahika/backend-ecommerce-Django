@@ -22,16 +22,15 @@ def scrape_product_data(url):
         # chrome_options.add_argument("--no-sandbox")
         # chrome_options.add_argument("--disable-dev-shm-usage")
 
-        # Initialize the WebDriver
+      
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         driver.get(url)
         time.sleep(3)  # Wait for the page to load
 
-        # Find product elements
+        
         product_elements = driver.find_elements(By.ID, 'product-item')
         print(f"Found {len(product_elements)} product elements.")  # Debug output
-
-        # Iterate over found product elements and extract data
+  
         for product in product_elements:
             try:
                 name = product.find_element(By.ID, 'product-name').text
