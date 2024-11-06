@@ -104,16 +104,16 @@ def get_cart_stat(request):
 
 @api_view(['GET'])
 def get_cart(request):
-    user = request.user if request.user.is_authenticated else None
+    user = request.user 
     cart_code = request.query_params.get("cart_code")
+
+    # if not user.is_authenticated:
+    #     return Response({"error": "User is not authenticated"},
+    #                      status=status.HTTP_401_UNAUTHORIZED)
 
     try:
    
-        cart = Cart.objects.get(cart_code=cart_code, paid=False)
-
-        if user and cart.user is None:
-            cart.user = user
-            cart.save()
+        cart = Cart.objects.get(cart_code=cart_code, user=user ,paid=False)
 
         serializer = CartSerializer(cart)
         return Response(serializer.data)
@@ -123,6 +123,8 @@ def get_cart(request):
             {"error": "Cart not found or already paid."},
             status=status.HTTP_404_NOT_FOUND
         )
+    
+
 
 @api_view(['PATCH'])
 def update_quantity(request):
