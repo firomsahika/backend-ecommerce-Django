@@ -104,22 +104,16 @@ def get_cart_stat(request):
 
 @api_view(['GET'])
 def get_cart(request):
-    user = request.user 
+    
+    if request.user:
+        user = request.user
+    else:
+        None
+
     cart_code = request.query_params.get("cart_code")
 
-    # if not user.is_authenticated:
-    #     return Response({"error": "User is not authenticated"},
-    #                      status=status.HTTP_401_UNAUTHORIZED)
-
     try:
-        if user and cart.user is None:
-            cart.user = user
-            cart.save()
-   
         cart = Cart.objects.get(cart_code=cart_code, user=user, paid=False)
-
-       
-
         serializer = CartSerializer(cart)
         return Response(serializer.data)
 
