@@ -8,7 +8,7 @@ from decimal import Decimal
 from django.apps import apps
 from .serializers import RegistrationSerializer ,UserSerializer,ProductSerializer,CartSerializer,DetailedProductSerializer,SimpleCartSerializer,CartItemSerializer
 from django.views.decorators.csrf import csrf_exempt
-from .api import ChapaAPI
+from rest_framework import status
 from django.http import JsonResponse
 import json
 from django.conf import settings
@@ -104,15 +104,13 @@ def get_cart_stat(request):
 
 @api_view(['GET'])
 def get_cart(request):
-    # Ensure the user is authenticated
     user = request.user if request.user.is_authenticated else None
     cart_code = request.query_params.get("cart_code")
 
     try:
-        # Retrieve the cart with the given cart code
+   
         cart = Cart.objects.get(cart_code=cart_code, paid=False)
 
-        # If the cart has no user and the user is logged in, assign the user to the cart
         if user and cart.user is None:
             cart.user = user
             cart.save()
