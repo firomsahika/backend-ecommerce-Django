@@ -112,8 +112,13 @@ def get_cart(request):
     #                      status=status.HTTP_401_UNAUTHORIZED)
 
     try:
+        if user and cart.user is None:
+            cart.user = user
+            cart.save()
    
-        cart = Cart.objects.get(cart_code=cart_code, user=user ,paid=False)
+        cart = Cart.objects.get(cart_code=cart_code, user=user, paid=False)
+
+       
 
         serializer = CartSerializer(cart)
         return Response(serializer.data)
@@ -123,8 +128,6 @@ def get_cart(request):
             {"error": "Cart not found or already paid."},
             status=status.HTTP_404_NOT_FOUND
         )
-    
-
 
 @api_view(['PATCH'])
 def update_quantity(request):
