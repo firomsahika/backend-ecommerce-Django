@@ -1,7 +1,11 @@
 from rest_framework import serializers
 from .models import Product,Cart,CartItem,ChapaTransaction
 from django.contrib.auth import get_user_model
+
 from decimal import Decimal
+
+User = get_user_model()
+
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,6 +40,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     items = CartItemSerializer(read_only=True, many=True)
     num_of_items = serializers.SerializerMethodField()
     sum_total = serializers.SerializerMethodField()

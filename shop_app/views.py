@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Product,Cart, CartItem,ChapaTransaction
 from decimal import Decimal
 from django.apps import apps
-from .serializers import RegistrationSerializer  ,UserSerializer,ProductSerializer,CartSerializer,DetailedProductSerializer,SimpleCartSerializer,CartItemSerializer
+from .serializers import RegistrationSerializer ,UserSerializer,ProductSerializer,CartSerializer,DetailedProductSerializer,SimpleCartSerializer,CartItemSerializer
 from django.views.decorators.csrf import csrf_exempt
 from .api import ChapaAPI
 from django.http import JsonResponse
