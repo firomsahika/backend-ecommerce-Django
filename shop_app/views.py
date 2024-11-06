@@ -104,12 +104,8 @@ def get_cart_stat(request):
 
 @api_view(['GET'])
 def get_cart(request):
-    
-    if request.user:
-        user = request.user
-    else:
-        None
 
+    
     cart_code = request.query_params.get("cart_code")
 
     try:
