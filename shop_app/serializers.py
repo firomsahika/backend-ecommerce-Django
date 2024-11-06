@@ -128,7 +128,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()  
         fields = ['id', 'username', 'email', 'phone', 'first_name', 'last_name','order_items'] 
 
-    def get_order_items(self, user:get_user_model):
+    def get_order_items(self, user):
         cartitems = CartItem.objects.filter(cart__user=user )
         serializer = NewCartItemSerializer(cartitems, many=True)
         return serializer.data
