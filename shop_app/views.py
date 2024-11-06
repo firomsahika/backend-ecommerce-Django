@@ -37,20 +37,52 @@ def product_detail(request, slug):
 @api_view(['POST'])
 def add_item(request):
     try:
-        cart_code = request.data.get('cart_code') 
-        product_id = request.data.get('product_id') 
+        # Allow unauthenticated users to add items to cart using cart_code
+        cart_code = request.data.get('cart_code')
+        product_id = request.data.get('product_id')
 
-        cart, created = Cart.objects.get_or_create(cart_code=cart_code) 
+        
+        if request.user.is_authenticated:
+            cart, created = Cart.objects.get_or_create(cart_code=cart_code, defaults={'user': request.user})
+        else:
+            cart, created = Cart.objects.get_or_create(cart_code=cart_code)
+
         product = Product.objects.get(id=product_id)
 
+       
         cartitem, created = CartItem.objects.get_or_create(cart=cart, product=product)
         cartitem.quantity = 1
         cartitem.save()
 
         serializer = CartItemSerializer(cartitem)
-        return Response({"data":serializer.data, "message":"cart item created succesfully!"}, status=201)
+        return Response({"data": serializer.data, "message": "Cart item created successfully!"}, status=201)
     except Exception as e:
-        return Response({"error":str(e)}, status=400)
+        return Response({"error": str(e)}, status=400)
+
+
+#  Associate the Cart with the User Upon Login
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Ensure the user is authenticated
+def associate_cart_with_user(request):
+    try:
+        cart_code = request.data.get('cart_code')  # Get cart_code from the client side
+        
+        # Fetch the cart using the cart_code
+        cart = Cart.objects.get(cart_code=cart_code)
+        
+        # If the cart does not already belong to a user, associate it with the logged-in user
+        if not cart.user:
+            cart.user = request.user
+            cart.save()
+
+        return Response({"message": "Cart successfully associated with the user!"}, status=200)
+    except Cart.DoesNotExist:
+        return Response({"error": "Cart not found"}, status=404)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+
+
+
 
 @api_view(['GET'])
 def product_in_cart(request):
