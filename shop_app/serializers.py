@@ -40,7 +40,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
+    
     items = CartItemSerializer(read_only=True, many=True)
     num_of_items = serializers.SerializerMethodField()
     sum_total = serializers.SerializerMethodField()
@@ -49,8 +49,8 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id', 'cart_code', 'user', 'items', 'sum_total', 'num_of_items', 'paid']
 
-    def get_user(self, cart):
-        return cart.user.username if cart.user else None
+    # def get_user(self, cart):
+    #     return cart.user.username if cart.user else None
     
     def get_sum_total(self, cart):
         items = cart.items.all()

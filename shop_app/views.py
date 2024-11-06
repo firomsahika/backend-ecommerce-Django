@@ -105,11 +105,10 @@ def get_cart_stat(request):
 @api_view(['GET'])
 def get_cart(request):
 
-    
     cart_code = request.query_params.get("cart_code")
 
     try:
-        cart = Cart.objects.get(cart_code=cart_code, user=user, paid=False)
+        cart = Cart.objects.get(cart_code=cart_code, paid=False)
         serializer = CartSerializer(cart)
         return Response(serializer.data)
 
