@@ -40,24 +40,24 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), allow_null=True)
     items = CartItemSerializer(read_only=True, many=True)
     num_of_items = serializers.SerializerMethodField()
     sum_total = serializers.SerializerMethodField()
+
     class Meta:
         model = Cart
-        fields = ['id','cart_code','user','items','sum_total','num_of_items', 'paid']
+        fields = ['id', 'cart_code', 'user', 'items', 'sum_total', 'num_of_items', 'paid']
 
     def get_sum_total(self, cart):
         items = cart.items.all()
         total = sum([item.product.price * item.quantity for item in items])
         return total
-    
+
     def get_num_of_items(self, cart):
         items = cart.items.all()
         total = sum([item.quantity for item in items])
         return total
-
 
 class SimpleCartSerializer(serializers.ModelSerializer):
     num_of_items = serializers.SerializerMethodField()

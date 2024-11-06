@@ -104,10 +104,27 @@ def get_cart_stat(request):
 
 @api_view(['GET'])
 def get_cart(request):
+    # Ensure the user is authenticated
+    user = request.user if request.user.is_authenticated else None
     cart_code = request.query_params.get("cart_code")
-    cart = Cart.objects.get(cart_code=cart_code, paid=False)
-    serializer = CartSerializer(cart)
-    return Response(serializer.data)
+
+    try:
+        # Retrieve the cart with the given cart code
+        cart = Cart.objects.get(cart_code=cart_code, paid=False)
+
+        # If the cart has no user and the user is logged in, assign the user to the cart
+        if user and cart.user is None:
+            cart.user = user
+            cart.save()
+
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
+
+    except Cart.DoesNotExist:
+        return Response(
+            {"error": "Cart not found or already paid."},
+            status=status.HTTP_404_NOT_FOUND
+        )
 
 @api_view(['PATCH'])
 def update_quantity(request):
