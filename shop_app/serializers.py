@@ -10,7 +10,7 @@ User = get_user_model()
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id','name','slug','ram','image','description','category','price']
+        fields = ['id','name','slug','ram','rating','image','description','category','price']
 
 
 class DetailedProductSerializer(serializers.ModelSerializer):

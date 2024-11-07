@@ -5,15 +5,17 @@ from uuid import uuid4
 
 
 class Product(models.Model):
-    CATEGORY = (("Asus", "ASUS"),
-                ("Hp", "HP"),
-                ("Dell", "DELL"),
-                ("Macbook","MACBOOK")
+    CATEGORY = (("Laptop", "LAPTOP"),
+                ("Headset", "HEADSET"),
+                ("Speaker", "SPEAKER"),
+                ("Mobile","MOBILE"),
+                ("Watch", "WATCH")
                 )
     name = models.CharField(max_length=100)
     slug = models.SlugField(blank=True, null=True) 
     ram = models.CharField(max_length=10, default="8GB")
     image = models.ImageField(upload_to='img')
+    rating= models.IntegerField(default=0)
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits = 6, decimal_places=2)
     category = models.CharField(max_length=15, choices=CATEGORY, blank=True, null=True)
