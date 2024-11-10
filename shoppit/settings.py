@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'core',
     'shop_app',
+    'chatbot',
     'chapa',
     'corsheaders',
     
