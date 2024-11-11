@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+# Access the OpenAI API key from the environment variable
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -27,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sitemaps',
     'django.contrib.staticfiles',
     'rest_framework',
     'core',
